@@ -6,7 +6,7 @@ Check us out on instagram: https://www.instagram.com/uwmeetfriends/
 
 ![](images/UWBluePurple.png)
 
-The original idea was to create an app, as shown below.
+The original idea was to create an app, as shown below. The ChatBot was an MVP for this idea.
 
 ![](images/iphone_app_r.png)
 
