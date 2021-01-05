@@ -3,5 +3,5 @@ A Discord ChatBot that helps users have smooth conversations when meeting someon
 
 ![](images/UWBluePurple.png)
 
-![](images/iphone_app.png)
+![](images/iphone_app_r.png)
 
