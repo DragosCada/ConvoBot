@@ -6,6 +6,8 @@ Check us out on instagram: https://www.instagram.com/uwmeetfriends/
 
 ![](images/UWBluePurple.png)
 
+To test out this bot, invite it to a discord server using this [link.](https://discord.com/api/oauth2/authorize?client_id=768205181267476500&permissions=8&scope=bot)
+
 Here is ConvoBot in action (there are three icebreaker games built):
 
 ![](images/main_screen.png)
