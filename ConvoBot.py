@@ -13,6 +13,10 @@ client.remove_command('help')
 
 data_folder = os.path.dirname(os.path.realpath(__file__))
 
+token = open(data_folder + "/token.txt", "r")
+token = token.readlines()[0]
+
+
 @client.command()
 @commands.is_owner()
 async def load(ctx, extension):
@@ -102,12 +106,5 @@ for filename in os.listdir(data_folder + r'/cogs'):
     print(filename)
     if filename.endswith('.py'):
         client.load_extension(f'cogs.{filename[:-3]}')
-
-
-client.run('NzY4MjA1MTgxMjY3NDc2NTAw.X49E0w.UopP1d_hXp6Vn5GhZlXpORKhsN0')
-
-# real token
-#'NzY4MjA1MTgxMjY3NDc2NTAw.X49E0w.UopP1d_hXp6Vn5GhZlXpORKhsN0'
-
-# test token
-# NzY5NjE2MzIzMDM4NDEyODQw.X5RnDg.S1Vb8KHR8queMhhj8sppC3zhavs
+        
+client.run(token)
