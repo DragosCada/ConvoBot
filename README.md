@@ -10,6 +10,8 @@ To test out this bot, invite it to a discord server using this [link.](https://d
 
 Here is ConvoBot in action (there are three icebreaker games built):
 
+![](play.gif)
+
 ![](images/main_screen.png)
 
 CommonQs game:
