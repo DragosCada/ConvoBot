@@ -20,7 +20,7 @@ CommonQs game:
 
 ![](images/comq.gif)
 
-Meet A Stranger and Battle A Friend! - a 2v2 game:
+Meet A Stranger and Battle A Friend! - a 2v2 game (also showcasing error handling, which is built in each game):
 
 ![](images/battle.gif)
 
