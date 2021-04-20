@@ -12,11 +12,12 @@ class warmup(commands.Cog):
         self.client = client
         self.loop = asyncio.get_event_loop()
 
-        self.warmup_task = None #a temp task
+        self.warmup_task = None #a temp task for timer
         self.task_list = {} #tasks started in each channel {{channel: task},..]
 
         self.channels_playing = [] #represents all text channels that are playing
 
+        #text file with random words for game
         self.random_words = open(data_folder + "/random_words.txt", "r")
         self.random_words = self.random_words.readlines()
 
@@ -30,6 +31,7 @@ class warmup(commands.Cog):
     #warmup game
     @commands.command(brief='Start a warm-up game.')
     async def warmup(self, ctx, *, players=None):
+        #initializing channel vars
         self.task_list[ctx.channel] = {}
         self.task_list[ctx.channel]['warmup_task'] = None
 
@@ -39,6 +41,7 @@ class warmup(commands.Cog):
         self.channel_vars[ctx.channel]['random_index3'] = random.randint(0, len(self.random_words)-1)
         self.channel_vars[ctx.channel]['random_index4'] = random.randint(0, len(self.random_words)-1)
 
+        #prevents user to only playing with 2, 3 or 4 players
         if players is None:
             await ctx.send(f"Please select one of these options: .warmup 2, .warmup 3, .warmup 4")
             return
@@ -48,10 +51,12 @@ class warmup(commands.Cog):
             await ctx.send(f"Please select one of these options: .warmup 2, .warmup 3, .warmup 4")
             return
 
-        if self.task_list[ctx.channel]['warmup_task'] is not None: #resets timer if you .start
+        #resets timer if you start a new game
+        if self.task_list[ctx.channel]['warmup_task'] is not None:
             self.task_list[ctx.channel]['warmup_task'].cancel()
             self.task_list[ctx.channel]['warmup_task'] = None
 
+        #starts timer and game
         self.warmup_task = self.loop.create_task(self.warmup_start(ctx, players))
 
         self.task_list[ctx.channel]['warmup_task'] = self.warmup_task
@@ -140,16 +145,19 @@ class warmup(commands.Cog):
                 await ctx.send(f"FINISHED")
                 await asyncio.sleep(2)
 
+        #sends end message
         self.loop.create_task(self.fin(ctx))
 
     @commands.command(brief='End a warm-up game.')
     async def fin(self, ctx):
+        #if playing game, ends all timers, tasks, and removes channel from playing
         if ctx.channel in self.channels_playing:
             if self.task_list[ctx.channel]['warmup_task'] is not None:
                 self.task_list[ctx.channel]['warmup_task'].cancel()
                 self.task_list[ctx.channel]['warmup_task'] = None
             self.task_list.pop(ctx.channel)
             self.channels_playing.remove(ctx.channel)
+        #if not playing game, error
         else:
             await ctx.send(f"Wrong command! Please start a new warmup game.")
             return

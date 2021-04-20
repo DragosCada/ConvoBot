@@ -28,6 +28,7 @@ class CommonQs(commands.Cog):
         self.gen_com_comments = gen_com_comments
         self.gen_skip_comments = gen_skip_comments
 
+        #used for internal tracking of how many games have been played
         self.com_metrics = open(data_folder + "/CommonQ_games_started.txt", "r")
         self.com_metrics = self.com_metrics.readlines()
         self.com_games_started = int(self.com_metrics[0])
@@ -40,14 +41,16 @@ class CommonQs(commands.Cog):
 
     @commands.command(brief='Start the game. Also used for restarting.')
     async def start(self, ctx):
+
+        #if channel is already playing
         if ctx.channel in self.channels_playing:
             await ctx.send(f"You're already playing a game!")
             return
 
         self.channels_playing.append(ctx.channel) #channel is now playing
 
+        #initializing channel vars
         self.ques = 0
-
         self.common.append([ctx.channel,0])
         self.skips.append([ctx.channel,0])
 
@@ -59,6 +62,7 @@ class CommonQs(commands.Cog):
                     item[1].cancel()
                     item[1] = None
 
+        #starts timer and keep track of it in task_list
         self.com_task = self.loop.create_task(self.timer(ctx))
         self.task_list.append([ctx.channel,self.com_task])
 
@@ -111,11 +115,13 @@ class CommonQs(commands.Cog):
                     item[1].cancel()
                     item[1] = None
 
+        #removes channel from playing
         if ctx.channel in self.channels_playing:
             self.channels_playing.remove(ctx.channel)
             await ctx.send("FINISHED!")
             self.loop.create_task(self.com_finish_msg(ctx))
         else:
+            #if they aren't playing, wrong command
             await ctx.send(f"Wrong command! Please start a new CommonQs game.")
 
         for item in list(self.task_list): #remove the channel from the task list
@@ -125,20 +131,24 @@ class CommonQs(commands.Cog):
     @commands.command(brief='For when you have a common answer')
     async def com(self, ctx):
 
+        #increases common answers count by 1
         for item in self.common:
             if item[0] == ctx.channel:
-                item[1] += 1  #increases common answers count by 1
+                item[1] += 1
 
         self.ques += 1
 
+        #prevents user from starting a new game without finishing this one
         if ctx.channel not in self.channels_playing:
             await ctx.send(f"Wrong command. Please start a new CommonQs game.")
             return
 
+        #if all questions have been asked, end game
         if self.ques >= len(self.common_qs):
             await ctx.send(f"WHOOOOO, you finished all the questions!")
             self.loop.create_task(self.stop(ctx))
         else:
+            #comment for responding to their answer
             if not f"{self.common_qs[self.ques-1][1][0]}": #if empty string, use gen_com_comments response.
                 await ctx.send(f"{random.choice(self.gen_com_comments)}")
             else:
@@ -150,16 +160,19 @@ class CommonQs(commands.Cog):
     @commands.command(brief='For skipping the question')
     async def skip(self,ctx):
 
+        #increases skiped answers count by 1
         for item in self.skips:
             if item[0] == ctx.channel:
-                item[1] += 1  #increases skiped answers count by 1
+                item[1] += 1
 
         self.ques += 1
 
+        #prevents user from starting a new game without finishing this one
         if ctx.channel not in self.channels_playing:
             await ctx.send(f"Wrong command. Please start a new CommonQs game.")
             return
 
+        #if all questions have been asked, end game
         if self.ques >= len(self.common_qs):
             await ctx.send(f"WHOOOOO, you finished all the questions!")
             self.loop.create_task(self.stop(ctx))
@@ -167,9 +180,10 @@ class CommonQs(commands.Cog):
             if not f"{self.common_qs[self.ques-1][1][0]}": #if empty string, don't say anything for now
                 pass
             else:
-                await ctx.send(f"{random.choice(self.common_qs[self.ques-1][1])}") #comment
+                #comment for responding to their answer
+                await ctx.send(f"{random.choice(self.common_qs[self.ques-1][1])}")
                 await asyncio.sleep(1)
-            await ctx.send(f"{self.common_qs[self.ques][0]}")
+            await ctx.send(f"{self.common_qs[self.ques][0]}")  #next question
 
     @commands.command(brief='Showing your stats (common and skips) so far')
     async def stats(self, ctx):
